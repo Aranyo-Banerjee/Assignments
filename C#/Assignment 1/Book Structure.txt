@@ -1,0 +1,55 @@
+using System;
+using System.Security.AccessControl;
+
+public struct Book                                                       //Creating a structure
+{
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public float Price { get; set; }                                     //Using auto-implemented properties for private fields
+    public BookType BookType { get; set; }
+    public Book(int _Id, string _title, float _price, BookType bookType)
+    {
+        this.Id = _Id;
+        this.Title = _title;                                            //Parameterized constructor to initialize fields
+        this.Price = _price;
+        this.BookType = bookType;
+    }
+    public void PrintDetails()
+    {
+        Console.WriteLine("Book Details:");
+        Console.WriteLine("Book ID = {0}", Id);                         //Displaying the book details
+        Console.WriteLine("Book Title = {0}", Title);
+        Console.WriteLine("Price of the Book = Rs. {0}", Price);
+        Console.WriteLine("Type of the Book = {0}", BookType.ToString());
+    }
+
+}
+public enum BookType
+{
+    Magazine,
+    Novel,
+    ReferenceBook,                                                      //Declaring enum
+    Miscellaneous
+}
+public class StructureBook
+{
+    public static void Main()
+    {
+        StructureBook ob = new StructureBook();
+        ob.AcceptDetails();
+    }
+    public void AcceptDetails()
+    {
+        Console.WriteLine("Enter book ID");
+        int _Id = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter book title");
+        string _title = Console.ReadLine();
+        Console.WriteLine("Enter book price");                          //Accepting book details from user
+        float _price = float.Parse(Console.ReadLine());
+        Console.WriteLine("Enter book type");
+        string st = Console.ReadLine();
+        BookType _bookType = (BookType)Enum.Parse(typeof(BookType), st);
+        Book B = new Book(_Id, _title, _price, _bookType);
+        B.PrintDetails();
+    }
+}

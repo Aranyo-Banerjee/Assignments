@@ -1,0 +1,19 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+class HighestMarks
+{
+    public static void Main()
+    {
+        float max = 0.0F;
+        float[] marks = new float[5];
+        Console.WriteLine("Enter average marks for five students");
+        for(int i=0; i < 5; i++)
+        {
+            marks[i] = float.Parse(Console.ReadLine());         //Accepting the five marks
+            if (marks[i] > max)
+                max = marks[i];                                 //Comparing and storing the highest marks
+        }
+        Console.WriteLine("The highest marks obtained = {0}", max);
+    }
+}
