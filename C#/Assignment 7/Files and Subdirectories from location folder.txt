@@ -1,0 +1,27 @@
+using System;
+using System.IO;
+
+public class FilesAndDirectories
+{
+    public static void Main()
+    {
+        string rootPath = @"C:\Users\HP\Desktop\C#\Assignments";                                      //Mentioning the location folder
+        var files = Directory.GetFiles(rootPath, "*.txt", SearchOption.TopDirectoryOnly);             //Retrieving the text files in location folder
+        Console.WriteLine("The text files present in the location :");
+        foreach (string file in files)
+        {
+            var fInfo = new FileInfo(file);
+            Console.WriteLine("File name : {0}  ,  File size = {1} bytes", Path.GetFileName(file) , fInfo.Length);       //Displaying the name and size of files
+            Console.WriteLine("Reading the file :");
+            StreamReader reader = new StreamReader(file);
+            Console.WriteLine(reader.ReadToEnd());                                                   //Reading the text files
+        }
+        Console.WriteLine();
+        Console.WriteLine("The list of subdirectories present in the location folder :");
+        var dirs = Directory.GetDirectories(rootPath);                                              //Retrieving the subdirectories in the location folder
+        foreach (string dir in dirs)
+        {
+            Console.WriteLine(dir);                                                                 //Displaying the list of subdirectories
+        }
+    }
+}

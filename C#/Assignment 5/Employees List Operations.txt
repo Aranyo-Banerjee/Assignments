@@ -1,0 +1,70 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+public class Employee
+{
+    public string EmpName { get; set; }
+    public Employee(string _empname)
+    {
+        EmpName = _empname;
+    }
+    public static void Main()
+    {
+        List<Employee> employees = new List<Employee>();
+        
+        do
+        {
+            Console.WriteLine("Enter choice : a - Add a new employee, b - Display list of employees, c - Display total number of employees, d - search for an Employee, e - exit.");
+            string choice = Console.ReadLine().ToLower();
+            if (choice == "e")
+                break;
+            switch (choice)
+            {
+                case "a":
+                    Console.WriteLine("Enter name of the employee");
+                    string _empname = Console.ReadLine();
+                    employees.Add(new Employee(_empname));
+                    break;
+
+                case "b":
+                    Console.WriteLine("The list of the employees is :");
+                    foreach (Employee emp in employees)
+                        Console.WriteLine(emp.EmpName);
+                    break;
+
+                case "c":
+                    Console.WriteLine("The total number of employees in the list = {0}", employees.Count());
+                    break;
+
+                case "d":
+                    Console.WriteLine("Enter name to search");
+                    string findname = Console.ReadLine();
+                    int f = 0;
+                    foreach (Employee emp in employees)
+                    {
+                        f = emp.SearchEmployee(findname);
+                        if (f == 1)
+                        {
+                            Console.WriteLine("Employee {0} is present in the list", findname);
+                            break;
+                        }
+                    }
+                    if (f == 0)
+                        Console.WriteLine("Employee {0} is not present in the list", findname);
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid Input. Try again");
+                    break;
+            }
+        } while (true);
+    }
+    public int SearchEmployee(string  findname)
+    {
+        int flag = 0;
+        if (EmpName.Equals(findname))
+            flag = 1;
+        return flag;
+    }
+}

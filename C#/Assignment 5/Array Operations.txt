@@ -1,0 +1,99 @@
+using System;
+using System.Globalization;
+
+public class ArrayOperations
+{
+    public int[] Arr1 { get; set; }
+    public string[] Arr2 { get; set; }
+    public ArrayOperations(int _intsize, int _stringsize)
+    {
+        Arr1 = new int[_intsize];
+        Arr2 = new string[_stringsize];
+    }
+    public void AcceptElements()
+    {
+        Console.WriteLine("Enter {0} elements for the integer array", Arr1.Length);
+        for (int i = 0; i < Arr1.Length; i++)
+            Arr1[i] = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter {0} elements for the string array", Arr2.Length);
+        for (int i = 0; i < Arr2.Length; i++)
+            Arr2[i] = Console.ReadLine();
+    }
+    public void Copy()
+    {
+        int[] copyArr1 = new int[Arr1.Length];
+        string[] copyArr2 = new string[Arr2.Length];
+        System.Array.Copy(Arr1, copyArr1, Arr1.Length);
+        System.Array.Copy(Arr2, copyArr2, Arr2.Length);
+        Console.WriteLine("The copied integer array is :");
+        foreach(int i in copyArr1)
+            Console.WriteLine(i);
+        Console.WriteLine("The copied string array is :");
+        foreach(string st in Arr2)
+            Console.WriteLine(st);
+    }
+    public void Sort()
+    {
+        Array.Sort(Arr1);
+        Console.WriteLine("The sorted integer array in ascending order :");
+        foreach(int i in Arr1)
+            Console.WriteLine(i);
+        Array.Sort(Arr2);
+        Console.WriteLine("The sorted string array in ascending order :");
+        foreach (string st in Arr2)
+            Console.WriteLine(st);
+    }
+    public void Clear()
+    {
+        Array.Clear(Arr1);
+        Array.Clear(Arr2);
+        Console.WriteLine("The integer array has been cleared :");
+        foreach (int i in Arr1)
+            Console.WriteLine(i);
+        Console.WriteLine("The string array has been cleared :");
+        foreach (string st in Arr2)
+            Console.WriteLine(st);
+        Console.WriteLine();
+    }
+    public void Reverse()
+    {
+        Array.Reverse(Arr1);
+        Console.WriteLine("The reversed integer array is :");
+        foreach (int i in Arr1)
+            Console.WriteLine(i);
+        Array.Reverse(Arr2);
+        Console.WriteLine("The reversed string array is");
+        foreach (string st in Arr2)
+            Console.WriteLine(st);
+    }
+    public static void Main()
+    {
+        int c = 0;
+        Console.WriteLine("Enter size of the integer array:");
+        int _intsize = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter size of the string array");
+        int _stringsize = int.Parse(Console.ReadLine());
+        ArrayOperations ob = new ArrayOperations(_intsize, _stringsize);
+        ob.AcceptElements();
+        Console.WriteLine("Enter choice of action: 1 - Copy, 2 - Sort, 3 - Clear, 4 - Reverse.");
+        int choice = int.Parse(Console.ReadLine());
+        switch (choice)
+        {
+            case 1:
+                ob.Copy();
+                break;
+            case 2:
+                ob.Sort();
+                break;
+            case 3:
+                ob.Clear();
+                break;
+            case 4:
+                ob.Reverse();
+                break;
+            default:
+                Console.WriteLine("Invalid input. Try again.");
+                break;
+        }
+    }
+}

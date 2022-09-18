@@ -1,0 +1,28 @@
+using System;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+using LitwareLib;
+public class EmployeeManagement
+{
+    public static void Main()
+    {
+        Console.WriteLine("Enter Manager details");
+        Console.WriteLine("Enter EmpID : ");
+        int _empNo = int.Parse(Console.ReadLine());
+        Console.WriteLine("Enter EmpName : ");                                      //Accepting Manager details
+        string _empName = Console.ReadLine();
+        Console.WriteLine("Enter Salary : ");
+        double _salary = double.Parse(Console.ReadLine());
+        Employee emp = new Manager(_empNo, _empName, _salary);
+        FileStream stream = new FileStream(@"C:\Users\HP\Desktop\C#\Assignments\Sample.txt", FileMode.Create, FileAccess.Write);
+        BinaryFormatter formatter = new BinaryFormatter();
+        formatter.Serialize(stream, emp);                                           //Serializing the object with binary formatter
+        stream.Close();
+        stream = new FileStream(@"C:\Users\HP\Desktop\C#\Assignments\Sample.txt", FileMode.Open, FileAccess.Read);
+        Employee empNew = (Employee)formatter.Deserialize(stream);                  //Deserializing the object
+        empNew.CalculateSalary();
+        empNew.PrintDetails();
+        stream.Close();
+    }
+}

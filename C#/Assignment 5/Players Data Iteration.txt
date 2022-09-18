@@ -1,0 +1,97 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+
+public class Player
+{
+    public string PlayerName { get; set; }
+    public int RunsScored { get; set; }
+    public Player(string _name, int _runs)
+    {
+        this.PlayerName = _name;
+        this.RunsScored = _runs;
+    }
+}
+
+
+public class Team : IEnumerable
+{
+    public Player[] Players { get; set; }
+    public Team(Player[] _players)
+    {
+        this.Players = _players;
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return (IEnumerator)GetEnumerator();
+    }
+    public Iteration GetEnumerator()
+    {
+        return new Iteration(Players);
+    }
+}
+
+public class Iteration : IEnumerator
+{
+    int index = -1;
+    Player[] Player_temp { get; set; }
+    public Iteration(Player[] _tempPlayerList )
+    {
+        this.Player_temp = _tempPlayerList;
+    }
+    public bool MoveNext()
+    {
+        index++;
+        return (index < Player_temp.Length);
+    }
+    public void Reset()
+    {
+        index = -1;
+    }
+    object IEnumerator.Current
+    {
+        get
+        {
+            return Current;
+        }
+    }
+    public Player Current
+    {
+        get
+        {
+            return Player_temp[index];
+        }
+    }
+}
+
+public class Sample
+{
+    public static void Main()
+    {
+        Console.WriteLine("Enter total number of players");
+        int tot = int.Parse(Console.ReadLine());
+        Player[] playerList = new Player[tot];
+        for (int i = 0; i < tot; i++)
+        {
+            Console.WriteLine("Enter name for player {0}", i + 1);
+            string _name = Console.ReadLine();
+            Console.WriteLine("Enter runs scored by player {0}", i + 1);
+            int _runs = int.Parse(Console.ReadLine());
+            playerList[i] = new Player(_name, _runs);
+        }
+        Team India = new Team(playerList);
+        Console.WriteLine("Displaying team details by iterating through object India");
+        foreach(var Players in India)
+        {
+            Console.WriteLine("Player Name : {0}", Players.PlayerName);
+            Console.WriteLine("Runs Scored : {0}", Players.RunsScored);
+        }
+        Console.WriteLine("Displaying player details by iterating through array Players[]");
+        foreach(Player players in playerList)
+        {
+            Console.WriteLine("Player Name : {0}", players.PlayerName);
+            Console.WriteLine("Runs Scored : {0}", players.RunsScored);
+        }
+    }
+}

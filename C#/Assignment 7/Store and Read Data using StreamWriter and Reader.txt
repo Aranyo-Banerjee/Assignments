@@ -1,0 +1,48 @@
+using System;
+using System.IO;
+
+public class AccountInfo
+{
+    public long AccountNumber { get; set; }
+    public string CustomerName { get; set; }
+    public double AccountBalance { get; set; }
+    public string BankName { get; set; }
+    public AccountInfo(long _accountNumber, string _customerName, double _accountBalance, string _bankName)
+    {
+        this.AccountNumber = _accountNumber;
+        this.CustomerName = _customerName;
+        this.AccountBalance = _accountBalance;
+        this.BankName = _bankName;
+    }
+    public static void Main()
+    {
+        Console.WriteLine("Enter customer name");
+        string _customerName = Console.ReadLine();                                              //Accepting the banking details of customer
+        Console.WriteLine("Enter customer account number");
+        long _accountNumber = long.Parse(Console.ReadLine());
+        Console.WriteLine("Enter account balance");
+        double _accountBalance = double.Parse(Console.ReadLine());
+        Console.WriteLine("Enter bank name");
+        string _bankName = Console.ReadLine();
+        AccountInfo account = new AccountInfo(_accountNumber, _customerName, _accountBalance, _bankName);
+        account.WriteFile();
+    }
+    public void WriteFile()
+    {
+        string filename = @"C:\Users\HP\Desktop\C#\Assignments\AccountInfo.txt";
+        FileStream stream = new FileStream(filename, FileMode.OpenOrCreate);
+        using(StreamWriter writer = new StreamWriter(stream))
+        {
+            writer.WriteLine("Customer Name = {0}", CustomerName);
+            writer.WriteLine("Bank Account Number = {0}", AccountNumber);                       //Using StreamWriter to store the details
+            writer.WriteLine("Bank Account Balance = {0}", AccountBalance);
+            writer.WriteLine("Bank Name = {0}", BankName);
+        }
+        using (StreamReader reader = new StreamReader(filename))                                 //Using StreamReader to retrieve and read the details
+        {
+            string text = reader.ReadToEnd();
+            Console.WriteLine("Retrieving bank account details of customer using StreamReader");
+            Console.WriteLine(text);
+        }
+    }
+}

@@ -1,0 +1,116 @@
+using System;
+using System.Xml.Serialization;
+
+public class MyStack<T> : ICloneable
+{
+    T[] Arr { get; set; }
+    int Top { get; set; }
+    int Size { get; set; }
+    public MyStack(int _size)
+    {
+        Top = 0;
+        Size = _size;
+        Arr = new T[Size];
+    }
+    public void Push(T num)
+    {
+        try
+        {
+            if (Top < Size)
+            {
+                Arr[Top++] = num;
+            }
+            else
+                throw new StackException("Stack is full. Cannot perform push operation");
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    public string Pop()
+    {
+        try
+        {
+            if (Top > 0)
+            {
+                Top--;
+                return "The value " + Arr[Top] + " has been popped from the stack";
+            }
+            else
+                throw new StackException("Stack is empty. Cannot perform pop operation");
+        }
+        catch(Exception ex)
+        {
+            return ex.Message;
+        }
+    }
+    public void Clone()
+    {
+        T[] arr2 = new T[Size];
+        arr2 = (T[])Arr.Clone();
+        Console.WriteLine("The cloned array is :");
+        for(int i = 0; i < Top; i++)
+            Console.WriteLine(arr2[i]);
+    }
+    public void Display()
+    {
+        for(int i = 0; i < Top; i++)
+            Console.WriteLine(Arr[i]);
+    }
+}
+public interface ICloneable
+{
+    public void Clone();
+}
+public class StackException : Exception
+{
+    public StackException() : base()
+    { }
+    public StackException(string text) : base(text)
+    { }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        string st;
+        Console.WriteLine("Enter the size of the array");
+        int size = int.Parse(Console.ReadLine());
+        MyStack<string> stack = new MyStack<string>(size);
+        do
+        {
+            Console.WriteLine("Enter choice of action : 1 - Push, 2 - Pop, 3 - Clone, 4 - Display stack elements, 5 - Exit.");
+            int choice = int.Parse(Console.ReadLine());
+            if (choice == 5)
+                break;
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("Enter number to be pushed into the stack");
+                    string temp = Console.ReadLine();
+                    stack.Push(temp);
+                    break;
+
+                case 2:
+                    st = stack.Pop();
+                    Console.WriteLine(st);
+                    break;
+
+                case 3:
+                    stack.Clone();
+                    break;
+
+                case 4:
+                    Console.WriteLine("The elements of the stack are :");
+                    stack.Display();
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice. Please try again");
+                    break;
+            }
+        } while (true);
+    }
+}

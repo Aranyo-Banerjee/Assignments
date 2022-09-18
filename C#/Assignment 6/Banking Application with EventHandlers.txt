@@ -1,0 +1,136 @@
+using System;
+
+public class Account
+{
+    public long AccountNumber { get; set; }
+    public string CustomerName { get; set; }
+    public double AccountBalance { get; set; }
+    public Account(long _accountNumber, string _customerName, double _accountBalance)
+    {
+        this.AccountNumber = _accountNumber;
+        this.CustomerName = _customerName;
+        this.AccountBalance = _accountBalance;
+    }
+    public void Withdraw(Program p, string bankName, MyEventArgs ev1, MyEventArgs ev2)
+    {
+        Console.WriteLine("Enter amount to withdraw");
+        double amount = double.Parse(Console.ReadLine());
+        if (AccountBalance < 1000 && bankName == "ICICI")
+        {
+            ev1.message = "Transaction cannot be continued as balance is insufficient in account";
+            p.FireUnderBalance(ev1);
+        }
+        else if (AccountBalance == 0 && bankName == "ICICI")
+        {
+            ev2.message = "Transaction cannot be continued as balance is zero in account";
+            p.FireBalanceZero(ev2);
+        }
+        else if ((AccountBalance - amount) < 1000 && bankName == "HDFC")
+        {
+            ev1.message = "Transaction cannot be continued as balance is insufficient in account";
+            p.FireUnderBalance(ev1);
+        }
+        else
+        {
+            AccountBalance = AccountBalance - amount;
+            Console.WriteLine("Amount {0} withdrawn. Updated bank balance = {1}", amount, AccountBalance);
+        }
+    }
+    public void Deposit()
+    {
+        Console.WriteLine("Enter amount to deposit");
+        double amount = double.Parse(Console.ReadLine());
+        AccountBalance = AccountBalance + amount;
+        Console.WriteLine("Amount {0} deposited. Updated bank balance = {1}", amount, AccountBalance);
+    }
+    public static void Main()
+    {
+        Console.WriteLine("Enter customer name");
+        string _customerName = Console.ReadLine();
+        Console.WriteLine("Enter customer account number");
+        long _accountNumber = long.Parse(Console.ReadLine());
+        Console.WriteLine("Enter account balance");
+        double _accountBalance = double.Parse(Console.ReadLine());
+        Console.WriteLine("Enter bank name");
+        string _bankName = Console.ReadLine();
+        Account account = new Account(_accountNumber, _customerName, _accountBalance);
+        Program p = new Program();
+        ICICIBank Icb = new ICICIBank(p);
+        MyEventArgs ev1 = new MyEventArgs();
+        MyEventArgs ev2 = new MyEventArgs();
+        do
+        {
+            Console.WriteLine("Enter action : 1 - Withdraw, 2 - Deposit, 3 - Exit");
+            int choice = int.Parse(Console.ReadLine());
+            if (choice == 3)
+                break;
+            switch (choice)
+            {
+                case 1:
+                    account.Withdraw(p, _bankName, ev1, ev2);
+                    break;
+
+                case 2:
+                    account.Deposit();
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice. Please try again");
+                    break;
+            }
+        } while (true);   
+    }
+}
+
+public delegate void AccountUnderBalance(object sender, MyEventArgs e);
+public delegate void AccountBalanceZero(object sender, MyEventArgs e);
+
+public class ICICIBank
+{
+    public ICICIBank(Program prog)
+    {
+        AccountUnderBalance del1 = new AccountUnderBalance(UnderBalanceHandler);
+        AccountBalanceZero del2 = new AccountBalanceZero(BalanceZeroHandler);
+        prog.UnderBalance += del1;
+        prog.BalanceZero += del2;
+    }
+    public void UnderBalanceHandler(object sender, MyEventArgs e)
+    {
+        Console.WriteLine(e.message);
+    }
+    public void BalanceZeroHandler(object sender, MyEventArgs e)
+    {
+        Console.WriteLine(e.message);
+    }
+}
+public class HDFCBank
+{
+    public HDFCBank(Program prog)
+    {
+        AccountUnderBalance del1 = new AccountUnderBalance(UnderBalanceHandler);
+        prog.UnderBalance += del1;
+    }
+    public void UnderBalanceHandler(object sender, MyEventArgs e)
+    {
+        Console.WriteLine(e.message);
+    }
+}
+public class Program
+{
+    public event AccountUnderBalance UnderBalance;
+    public event AccountBalanceZero BalanceZero;
+    public void FireUnderBalance(MyEventArgs e)
+    {
+        if(UnderBalance != null)
+            UnderBalance(this, e);
+    }
+    public void FireBalanceZero(MyEventArgs e)
+    {
+        if (BalanceZero != null)
+            BalanceZero(this, e);
+    }
+}
+public class MyEventArgs : EventArgs
+{
+    public string message { get; set; }
+}

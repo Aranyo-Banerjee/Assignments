@@ -1,0 +1,213 @@
+using System;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using System.Collections;
+using System.Linq;
+
+public class Employee : IPrintable
+{
+    public int EmpNo { get; set; }
+    public string EmpName { get; set; }
+    public double Salary { get; set; }
+    public double HRA { get; set; }
+    public double TA { get; set; }
+    public double DA { get; set; }
+    public double PF { get; set; }
+    public double TDS { get; set; }
+    public double NetSalary { get; set; }
+    public double GrossSalary { get; set; }
+    public Employee(int _empNo, string _empName, double _salary)
+    {
+        this.EmpNo = _empNo;
+        this.EmpName = _empName;
+        this.Salary = _salary;
+    }
+    public double GetGrossSalary()
+    {
+        if (Salary < 5000)
+        {
+            HRA = (0.1) * Salary;
+            TA = (0.05) * Salary;
+            DA = (0.15) * Salary;
+        }
+        else if (Salary < 10000)
+        {
+            HRA = (0.15) * Salary;
+            TA = (0.1) * Salary;
+            DA = (0.2) * Salary;
+        }
+        else if (Salary < 15000)
+        {
+            HRA = (0.2) * Salary;
+            TA = (0.15) * Salary;
+            DA = (0.25) * Salary;
+        }
+        else if (Salary < 20000)
+        {
+            HRA = (0.25) * Salary;
+            TA = (0.2) * Salary;
+            DA = (0.3) * Salary;
+        }
+        else
+        {
+            HRA = (0.3) * Salary;
+            TA = (0.25) * Salary;
+            DA = (0.35) * Salary;
+        }
+        GrossSalary = Salary + HRA + TA + DA;
+        return GrossSalary;
+    }
+    public virtual double CalculateSalary()
+    {
+        GrossSalary = GetGrossSalary();
+        PF = (0.1) * GrossSalary;
+        TDS = (0.18) * GrossSalary;
+        NetSalary = GrossSalary - (PF + TDS);
+        return NetSalary;
+    }
+    public void PrintDetails()
+    {
+        Console.WriteLine();
+        Console.WriteLine("Employee Name : {0}", EmpName);
+        Console.WriteLine("Employee Number : {0}", EmpNo);
+        Console.WriteLine("Gross Salary : {0}", GrossSalary);
+        Console.WriteLine("Net Salary : {0}", NetSalary);
+        Console.WriteLine();
+    }
+}
+
+
+public delegate void EmployeeDelegate(ArrayList employees, ArrayList managerindex);
+
+public class EmployeeManagement
+{
+    public static void Main()
+    {
+        double GrossSal, NetSal;
+        Console.WriteLine("Enter total number of new employees");
+        int tot = int.Parse(Console.ReadLine());
+        ArrayList managerEmployees = new ArrayList();
+        ArrayList executiveEmployees = new ArrayList();
+        for (int i = 0; i < tot; i++)
+        {
+        label2:
+            try
+            {
+                Console.WriteLine("Enter type of Employee : 1.Manager, 2.Marketing Executive, 3.Normal Employee");
+                int type = int.Parse(Console.ReadLine());
+                if (type != 1 && type != 2 && type != 3)
+                {
+                    Console.WriteLine("Invalid input. Please try again");
+                    Console.WriteLine();
+                    goto label2;
+                }
+                Console.WriteLine("Enter EmpNo for Employee {0}", (i + 1));
+                int _empNo = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter EmpName for Employee {0}", (i + 1));
+                string _empName = Console.ReadLine();
+                Console.WriteLine("Enter Salary for Employee {0}", (i + 1));
+                double _salary = double.Parse(Console.ReadLine());
+                if (_salary < 0)
+                    throw new Exception("Negative Salary");
+                switch (type)
+                {
+                    case 1:
+                        managerEmployees.Add(new Manager(_empNo, _empName, _salary));
+                        break;
+
+                    case 2:
+                        Console.WriteLine("Enter kilometer travelled");
+                        int _kmTravel = int.Parse(Console.ReadLine());
+                        executiveEmployees.Add(new MarketingExecutive(_empNo, _empName, _salary, _kmTravel));
+                        break;
+
+                    case 3:
+                        break;
+                }
+            }
+            catch (System.FormatException)
+            {
+                Console.WriteLine("Probable mismatch of input data format. Please check and try again from the beginning");
+                Console.WriteLine();
+                goto label2;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Salary cannot be negative. Re-enter the employee details");
+                Console.WriteLine();
+                goto label2;
+            }
+        }
+        EmployeeDelegate del1 = new EmployeeDelegate(DisplayManagerDetails);
+        EmployeeDelegate del2 = new EmployeeDelegate(DisplayExecutiveDetails);
+        EmployeeDelegate del = del1 + del2;
+        del(managerEmployees, executiveEmployees);
+    }
+    public static void DisplayManagerDetails(ArrayList managerEmps, ArrayList executiveEmps)
+    {
+        Console.WriteLine("Printing all manager details using Delegates");
+        foreach (Employee emp in managerEmps)
+        {
+            emp.CalculateSalary();
+            emp.PrintDetails();
+        }
+    }
+    public static void DisplayExecutiveDetails(ArrayList managerEmps, ArrayList executiveEmps)
+    {
+        Console.WriteLine("Printing all marketing executive details using Delegates");
+        foreach (Employee emp in executiveEmps)
+        {
+            emp.CalculateSalary();
+            emp.PrintDetails();
+        }
+    }
+}
+
+public class Manager : Employee
+{
+    double PetrolAllowance { get; set; }
+    double FoodAllowance { get; set; }
+    double OtherAllowance { get; set; }
+    public Manager(int _empNo, string _empName, double _salary) : base(_empNo, _empName, _salary)
+    {
+        PetrolAllowance = (0.08) * _salary;
+        FoodAllowance = (0.13) * _salary;
+        OtherAllowance = (0.03) * _salary;
+    }
+    public override double CalculateSalary()
+    {
+        GrossSalary = base.GetGrossSalary();
+        GrossSalary = GrossSalary + PetrolAllowance + FoodAllowance + OtherAllowance;
+        PF = (0.1) * GrossSalary;
+        TDS = (0.18) * GrossSalary;
+        NetSalary = GrossSalary - (PF + TDS);
+        return NetSalary;
+    }
+}
+
+public class MarketingExecutive : Employee
+{
+    double KilometerTravel { get; set; }
+    double TourAllowance { get; set; }
+    double TelephoneAllowance { get; set; }
+    public MarketingExecutive(int _empNo, string _empName, double _salary, int _kmTravel) : base(_empNo, _empName, _salary)
+    {
+        KilometerTravel = _kmTravel;
+        TourAllowance = 5 * KilometerTravel;
+        TelephoneAllowance = 1000;
+    }
+    public override double CalculateSalary()
+    {
+        GrossSalary = base.GetGrossSalary();
+        GrossSalary = GrossSalary + TourAllowance + TelephoneAllowance;
+        PF = (0.1) * GrossSalary;
+        TDS = (0.18) * GrossSalary;
+        NetSalary = GrossSalary - (PF + TDS);
+        return NetSalary;
+    }
+}
+public interface IPrintable
+{
+    public void PrintDetails();
+}
