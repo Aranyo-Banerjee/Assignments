@@ -1,0 +1,23 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+
+class ParamArray
+{
+    public static void Main()
+    {
+        Console.WriteLine("Enter length of the array");                 //Accepting the number of elements to be stored in array
+        int len = int.Parse(Console.ReadLine());
+        int[] integers = new int[len];
+        Console.WriteLine("Enter {0} numbers into the array", len);
+        for(int i = 0; i < len; i++)
+            integers[i] = int.Parse(Console.ReadLine());                //Accepting the integers into the array
+        SumIntegers(integers);
+    }
+    public static void SumIntegers(params int[] integers)               //Using params keyword to pass the array to function
+    {
+        int sum = 0;
+        foreach(int i in integers)
+            sum = sum + i;                                              //Calculating the sum of all the integers in the array
+        Console.WriteLine("The sum of all the integers = {0}", sum);
+    }
+}
