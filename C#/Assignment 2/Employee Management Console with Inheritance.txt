@@ -1,0 +1,115 @@
+using System;
+using LitwareLib;
+
+public class EmployeeManagement
+{
+    public static void Main()
+    {
+        double GrossSal, NetSal;
+        Console.WriteLine("Enter total number of new employees");
+        int tot = int.Parse(Console.ReadLine());
+        Employee[] employees = new Employee[tot];
+        for (int i = 0; i < tot; i++)
+        {
+        label2:
+            try
+            {
+                Console.WriteLine("Enter type of Employee : 1.Manager, 2.Marketing Executive, 3.Normal Employee");
+                int type = int.Parse(Console.ReadLine());
+                if (type != 1 && type != 2 && type != 3)
+                {
+                    Console.WriteLine("Invalid input. Please try again");
+                    Console.WriteLine();
+                    goto label2;
+                }
+                Console.WriteLine("Enter EmpNo for Employee {0}", (i + 1));
+                int _empNo = int.Parse(Console.ReadLine());
+                Console.WriteLine("Enter EmpName for Employee {0}", (i + 1));
+                string _empName = Console.ReadLine();
+                Console.WriteLine("Enter Salary for Employee {0}", (i + 1));
+                double _salary = double.Parse(Console.ReadLine());
+                if (_salary < 0)
+                    throw new Exception("Negative Salary");
+                switch (type)
+                {
+                    case 1:
+                        employees[i] = new Manager(_empNo, _empName, _salary);
+                        NetSal = employees[i].CalculateSalary();
+                        employees[i].PrintDetails(i + 1, "Manager");
+                        break;
+
+                    case 2:
+                        Console.WriteLine("Enter kilometer travelled");
+                        int _kmTravel = int.Parse(Console.ReadLine());
+                        employees[i] = new MarketingExecutive(_empNo, _empName, _salary, _kmTravel);
+                        NetSal = employees[i].CalculateSalary();
+                        employees[i].PrintDetails(i + 1, "Marketing Executive");
+                        break;
+
+                    case 3:
+                        employees[i] = new Employee(_empNo, _empName, _salary);
+                        GrossSal = employees[i].GetGrossSalary();
+                        NetSal = employees[i].CalculateSalary();
+                        employees[i].PrintDetails(i + 1, "Employee");
+                        break;
+                }
+            }
+            catch (System.FormatException)
+            {
+                Console.WriteLine("Probable mismatch of input data format. Please check and try again from the beginning");
+                Console.WriteLine();
+                goto label2;
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Salary cannot be negative. Re-enter the employee details");
+                Console.WriteLine();
+                goto label2;
+            }
+        }
+    }
+}
+
+public class Manager : Employee
+{
+    double PetrolAllowance { get; set; }
+    double FoodAllowance { get; set; }
+    double OtherAllowance { get; set; }
+    public Manager(int _empNo, string _empName, double _salary) : base(_empNo, _empName, _salary)
+    {
+        PetrolAllowance = (0.08) * _salary;
+        FoodAllowance = (0.13) * _salary;
+        OtherAllowance = (0.03) * _salary;
+    }
+    public override double CalculateSalary()
+    {
+        GrossSalary = base.GetGrossSalary();
+        GrossSalary = GrossSalary + PetrolAllowance + FoodAllowance + OtherAllowance;
+        PF = (0.1) * GrossSalary;
+        TDS = (0.18) * GrossSalary;
+        NetSalary = GrossSalary - (PF + TDS);
+        return NetSalary;
+    }
+}
+
+public class MarketingExecutive : Employee
+{
+    double KilometerTravel { get; set; }
+    double TourAllowance { get; set; }
+    double TelephoneAllowance { get; set; }
+    public MarketingExecutive(int _empNo, string _empName, double _salary, int _kmTravel) : base(_empNo, _empName, _salary)
+    {
+        KilometerTravel = _kmTravel;
+        TourAllowance = 5 * KilometerTravel;
+        TelephoneAllowance = 1000;
+    }
+    public override double CalculateSalary()
+    {
+        GrossSalary = base.GetGrossSalary();
+        GrossSalary = GrossSalary + TourAllowance + TelephoneAllowance;
+        PF = (0.1) * GrossSalary;
+        TDS = (0.18) * GrossSalary;
+        NetSalary = GrossSalary - (PF + TDS);
+        return NetSalary;
+    }
+}
